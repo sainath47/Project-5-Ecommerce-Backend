@@ -2,58 +2,92 @@ const mongoose = require("mongoose")
 
 
 
-
-
 const userchema = new mongoose.Schema({
 
     fname: {
-        type:string, 
-        required:true,
+        type: String,
+        required: true,
         unique: true,
+        trim:true
     },
+
     lname: {
-        type:string,
-        required:true,
+        type: String,
+        required: true,
+        trim:true
     },
+
     email: {
-        typre:string, 
-        required:true, 
-         unique: true,
-        },
+        type: String,
+        required: true,
+        unique: true,
+        trim:true,
+        validate: {
+            validator: function (email) {
+                return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
+            },
+            message: "please enter a valid email"
+        }
+    },
+
     profileImage: {
-        type:string, 
-       require:true
+        type: String,
+        require: true
     }, // s3 link
+
     phone: {
-        typ:string, 
-        requred:true, 
-        unique: true, 
+        type: String,
+        requred: true,
+        unique: true,
+        trim: true,
+        validator: function (phone) {
+            return /^(\+\d{1,3}[- ]?)?\d{10}$/.test(phone);
+        }
         //valid Indian mobile number
-    }, 
+    },
+
     password: {
-        type:string,
-        required:true, 
+        type: String,
+        required: true,
+        trim:true
         //minLen 8, maxLen 15
     }, // encrypted password
+
     address: {
-      shipping: {
-        street: {
-            type:string, 
-            required: true ,
+        shipping: {
+            street: {
+                type: String,
+                required: true,
+            },
+            city: {
+                type: String,
+                required: true
+            },
+            pincode: {
+                type: Number,
+                required: true
+            }
         },
-        city: {
-            type:string, 
-            required:true
-        },
-        pincode: {
-            type:number,
-            required: true
-           }
-      },
-      billing: {
-        street: {
-            type:string, 
-            required:true
-        },
-        city: {
-            type:strin
+
+        billing: {
+            street: {
+                type: String,
+                required: true
+            },
+            city: {
+                type: String,
+                required: true
+            },
+            pincode: {
+                type: Number,
+                rquired: true
+            }
+
+        }
+    }
+    // createdAt: {timestamp},
+    // updatedAt: {timestamp},
+
+}, { timestamps: true })
+
+module.exports = mongoose.model('UserData', userchema)
