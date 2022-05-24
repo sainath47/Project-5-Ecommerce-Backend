@@ -7,53 +7,66 @@ const mongoose = require("mongoose")
 const userchema = new mongoose.Schema({
 
     fname: {
-        type:string, 
+        type:String, 
         required:true,
         unique: true,
     },
     lname: {
-        type:string,
+        type:String,
         required:true,
     },
     email: {
-        typre:string, 
+        type:String, 
         required:true, 
          unique: true,
         },
     profileImage: {
-        type:string, 
+        type:String, 
        require:true
     }, // s3 link
     phone: {
-        typ:string, 
+        type:String, 
         requred:true, 
         unique: true, 
         //valid Indian mobile number
     }, 
     password: {
-        type:string,
+        type:String,
         required:true, 
         //minLen 8, maxLen 15
     }, // encrypted password
     address: {
       shipping: {
         street: {
-            type:string, 
+            type:String, 
             required: true ,
         },
         city: {
-            type:string, 
+            type:String, 
             required:true
         },
         pincode: {
-            type:number,
+            type:Number,
             required: true
-           }
+           }}
       },
       billing: {
         street: {
-            type:string, 
+            type:String, 
             required:true
         },
         city: {
-            type:strin
+            type:String, 
+            required:true
+        },
+        pincode: {
+            type:Number,
+            required: true
+           }
+      }
+    }, {timestamps:true})
+
+
+    module.exports = mongoose.model('user',userchema)
+    
+     
