@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const aws = require("aws-sdk");
 
+
 const ObjectId = require("mongoose").Types.ObjectId;
 
 aws.config.update({
@@ -241,13 +242,32 @@ const createUser = async function (req, res) {
           .send({ status: false, message: "Phone number is already exist" });
     }
 
-    let password = req.body.password;
-    const { fname, lname, email, phone, address } = req.body;
-    console.log(password);
-  } catch (error) {
-    res.status(500).send({ msg: error.message });
-  }
-};
+    let password = req.body.password
+    const {fname,lname,email,phone,address}=req.body
+    console.log(password)
+  
+ 
+       const data = {fname,lname,email,phone,address}
+ 
+       let files = req.files
+       if(files && files.length>0){
+         //upload to s3 and get the uploaded link
+         // res.send the link back to frontend/postman
+         let uploadedprofileImage= await uploadFile( files[0] )
+         data["profileImage"] = uploadedprofileImage
+      
+     }
+     
+ const saltRounds =10
+ data["password"] = await bcrypt.hash(password, saltRounds);
+       let createUser= await userModel.create(data)
+       res.status(201).send({status:true,message:"sucessfuly created the user",data:createUser}) 
+     }
+       catch(err){
+           res.status(500).send({status:false,message:err.message})
+       }
+      }
+
 
 const userlogin = async function (req, res) {
   try {
@@ -370,4 +390,4 @@ module.exports = {
   getUserdata,
   UpdateUserData,
   updateUserById,
-};
+}
