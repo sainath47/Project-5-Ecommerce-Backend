@@ -156,6 +156,7 @@ const userlogin = async function (req, res) {
     try {
       const email = req.body.email;
       const password = req.body.password;
+      
   
       if (!password) {
         return res.status(400).send({ status: false, msg: "password is required" })
@@ -173,6 +174,7 @@ const userlogin = async function (req, res) {
 
 
       const checkedUser = await userModel.findOne({ email });
+      let userId= checkedUser._id.toString()
       const match = await bcrypt.compare(password, checkedUser.password);
 
       if(!match) {
@@ -184,8 +186,10 @@ const userlogin = async function (req, res) {
       }
   
       else {
-        const token = jwt.sign({ userId: checkedUser._id.toString() }, "functionUp", { expiresIn: '4d' });
-        return res.status(200).send({ status: true, msg:"User login succesfull", data: token });
+        const token = jwt.sign({userId  }, "functionUp", { expiresIn: '4d' });
+
+        const result = {userId,token}
+        return res.status(200).send({ status: true, msg:"User login succesfull",data: result });
       }
   
     }
