@@ -136,18 +136,24 @@ const createUser = async function (req, res) {
             //     }
 =======
             
-            if(!isValid(address.shipping.street)){
-                return res.status(400).send({status:false, msg: "street is required"})
-            }
+            // if(!isValid(address.shipping.street)){
+            //     return res.status(400).send({status:false, msg: "street is required"})
+            // }
 
-            if(!isValid(city)){
-                return res.status(400).send({status:false, msg: "street is required"})
-            }
+            // if(!isValid(city)){
+            //     return res.status(400).send({status:false, msg: "street is required"})
+            // }
 
+<<<<<<< HEAD
             if(!isValid(pincode)){
                 return res.status(400).send({status:false, msg: "street is required"})
             }
 >>>>>>> 89fb413c96263e466dc77aa758af643d7ebb57c6
+=======
+            // if(!isValid(pincode)){
+            //     return res.status(400).send({status:false, msg: "street is required"})
+            // }
+>>>>>>> fce5ff5f71ea1dd0d5a077d7136b72c145557916
         }
 
         let password = req.body.password
