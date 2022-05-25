@@ -11,7 +11,7 @@ app.use( multer().any())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended : true }));
 
-mongoose.connect("mongodb+srv://pranali9897:fVYIUSUqjGOpc3Ts@pranali.boijp.mongodb.net/group28Database", {
+mongoose.connect("mongodb+srv://SAINATH47:COOLESTBEING@cluster0.fk14j.mongodb.net/SAINATH", {
     useNewUrlParser: true
 })
 .then( () => console.log("MongoDb is connected"))   // it passes the function when the promises gets resolved

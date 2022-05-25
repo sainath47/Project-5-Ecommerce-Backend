@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const usermodel = require("../model/usermodel.js");
+const userModel = require("../model/usermodel.js");
 const validator= require('validator');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
@@ -59,13 +59,14 @@ const isvalidRequestBody = function (requestbody) {
 const createUser = async function (req, res) {
     try {
 
-        let data = req.body
+    let body = req.body
+   
 
-        if (!isvalidRequestBody(data)) {
+        if (!isvalidRequestBody(body)) {
             return res.status(400).send({ status: false, msg: "data not found" })
 
         }else{
-            const {fname, lname, email, profileImage, phone, password, street, city, pincode}=data
+            const {fname, lname, email, phone, password}=body
 
             if(!isValid(fname)){
                 return res.status(400).send({status:false, msg: "first name is required"})
@@ -83,9 +84,7 @@ const createUser = async function (req, res) {
                 return res.status(400).send({status:false, msg: "Please enter a valid email"})
             }
 
-            if(!isValid(profileImage)){
-                return res.status(400).send({status:false, msg: "profileImage is required"})
-            }
+           
 
             if(!isValid(phone)){
                 return res.status(400).send({status:false, msg: "phone is required"})
@@ -101,40 +100,42 @@ const createUser = async function (req, res) {
             }
 
             
-            if(!isValid(street)){
-                return res.status(400).send({status:false, msg: "street is required"})
-            }
+        //     if(!isValid(street)){
+        //         return res.status(400).send({status:false, msg: "street is required"})
+        //     }
 
-            if(!isValid(city)){
-                return res.status(400).send({status:false, msg: "street is required"})
-            }
+        //     if(!isValid(city)){
+        //         return res.status(400).send({status:false, msg: "street is required"})
+        //     }
 
-            if(!isValid(pincode)){
-                return res.status(400).send({status:false, msg: "street is required"})
-            }
+        //     if(!isValid(pincode)){
+        //         return res.status(400).send({status:false, msg: "street is required"})
+        //     }
         }
     
-        const saltRounds = 10;
-        var password = "pranali@123";
+        let password = req.body.password
+   const {fname,lname,email,phone,address}=req.body
+   console.log(password)
+ 
 
-        bcrypt.genSalt(saltRounds, function (err, salt) {
-            bcrypt.hash(password, salt, function (err, hash) {
-                // Store hash in database here
-                console.log(hash)
-            
-            });
+      const data = {fname,lname,email,phone,address}
 
-        });
+      let files = req.files
+      if(files && files.length>0){
+        //upload to s3 and get the uploaded link
+        // res.send the link back to frontend/postman
+        let uploadedprofileImage= await uploadFile( files[0] )
+        data["profileImage"] = uploadedprofileImage
+     
+    }
+    
+const saltRounds = 10
+data["password"] = await bcrypt.hash(password, saltRounds);
+      let createUser= await userModel.create(data)
+      res.status(201).send({status:true,message:"sucessfuly created the user",data:createUser}) 
 
-            if(profileImage && profileImage.length>0){
-                //upload to s3 and get the uploaded link
-                // res.send the link back to frontend/postman
-                let uploadedprofileImage= await uploadFile( profileImage[0] )
-                res.status(201).send({msg: "file uploaded succesfully", data: uploadedprofileImage})}
 
-
-            let saveData = await usermodel.create(data)
-            return res.status(201).send({ status: true, msg: "User created successfully", data:saveData })
+           
     
        
         
@@ -169,14 +170,22 @@ const userlogin = async function (req, res) {
         return res.status(400).send({ status: false, msg: "email is not valid" })
       }
   
-      const checkedUser = await usermodel.findOne({ email: email, password: password });
+
+
+      const checkedUser = await userModel.findOne({ email });
+      const match = await bcrypt.compare(password, checkedUser.password);
+
+      if(!match) {
+        return res.status(400).send({ status: false, msg: "password wrong" });
+      }
+
       if (!checkedUser) {
-        return res.status(404).send({ status: false, msg: "email or password is not correct" });
+        return res.status(400).send({ status: false, msg: "email or password is not correct" });
       }
   
       else {
-        const token = jwt.sign({ userId: checkedUser._id.toString() }, "functionUp", { expiresIn: '6000s' });
-        return res.status(201).send({ status: true, msg:"User login succesfull", data: token });
+        const token = jwt.sign({ userId: checkedUser._id.toString() }, "functionUp", { expiresIn: '4d' });
+        return res.status(200).send({ status: true, msg:"User login succesfull", data: token });
       }
   
     }
