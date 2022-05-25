@@ -66,7 +66,9 @@ const createUser = async function (req, res) {
             return res.status(400).send({ status: false, msg: "data not found" })
 
         }else{
-            const {fname, lname, email, phone, password}=body
+            const {fname, lname, email, phone, password,address}=body
+
+            const { shipping, billing } = address
 
 
             if(!isValid(fname)){
@@ -103,26 +105,94 @@ const createUser = async function (req, res) {
 
 
             if(! /^(\+\d{1,3}[- ]?)?\d{10}$/.test(phone)){
-                return res.status(400).send({status:false, msg: "please enter a valid email"})
+                return res.status(400).send({status:false, msg: "please enter a valid phone"})
             }
 
             
             if(!isValid(password)){
                 return res.status(400).send({status:false, msg: "password is required"})
             }
+            if(password.length<8 ||password.length>15 )return res.status(400).send({status:false, msg: "password must be 8-15 characters"})
 
-            
-            // if(!isValid(address.shipping.street)){
-            //     return res.status(400).send({status:false, msg: "street is required"})
-            // }
+          //Address Validation
+          if (!address) {
+            return res.status(400).send({ status: false, message: "address is required" })
+        }
 
-            // if(!isValid(city)){
-            //     return res.status(400).send({status:false, msg: "street is required"})
-            // }
 
-            // if(!isValid(pincode)){
-            //     return res.status(400).send({status:false, msg: "street is required"})
-            // }
+        // shipping
+        // if (!shipping) {
+        //     return res.status(400).send({ status: false, message: "shipping address is required" })
+        // }
+        if (!shipping.street) {
+            return res.status(400).send({ status: false, message: "street is required" })
+        }
+        if (!shipping.city) {
+            return res.status(400).send({ status: false, message: "city is required" })
+        }
+        if (!shipping.pincode) {
+            return res.status(400).send({ status: false, message: "pincode is required" })
+        }
+        if(!(/^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/).test(shipping.pincode)) return res.status(400).send({ status: false, message: "shipping pincode is invalid" })
+        if(!(/^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/).test(billing.pincode)) return res.status(400).send({ status: false, message: "billing pincode is invalid" })
+
+        // billing
+
+        // if (!billing) {
+        //     return res.status(400).send({ status: false, message: "billing address is required" })
+        // }
+        if (!billing.street) {
+            return res.status(400).send({ status: false, message: "street is required" })
+        }
+        if (!billing.city) {
+            return res.status(400).send({ status: false, message: "city is required" })
+        }
+        if (!billing.pincode) {
+            return res.status(400).send({ status: false, message: "pincode is required" })
+        }
+
+        //isvalid shipping
+
+        // if (!isValid(shipping)) {
+        //     return res.status(400).send({ status: false, message: "shipping address is invalid" })
+        // }
+
+        if (!isValid(shipping.street)) {
+            return res.status(400).send({ status: false, message: "street is invalid" })
+        }
+
+        if (!isValid(shipping.city)) {
+            return res.status(400).send({ status: false, message: "city is invalid" })
+        }
+
+        if (!isValid(shipping.pincode)) {
+            return res.status(400).send({ status: false, message: "pincode is invalid" })
+        }
+
+        //isvalid billing
+
+        // if (!isValid(billing)) {
+        //     return res.status(400).send({ status: false, message: "shipping address is invalid" })
+        // }
+
+        if (!isValid(billing.street)) {
+            return res.status(400).send({ status: false, message: "street is invalid" })
+        }
+
+        if (!isValid(billing.city)) {
+            return res.status(400).send({ status: false, message: "city is invalid" })
+        }
+
+        if (!isValid(billing.pincode)) {
+            return res.status(400).send({ status: false, message: "pincode is invalid" })
+        }
+
+
+        const isEmailExist = await userModel.findOne({ email })
+        if (isEmailExist) return res.status(400).send({ status: false, message: "Email is already exist" })
+
+        const isPhoneExist = await userModel.findOne({ phone })
+        if (isPhoneExist) return res.status(400).send({ status: false, message: "Phone number is already exist" })
         }
     
         let password = req.body.password
@@ -146,12 +216,6 @@ data["password"] = await bcrypt.hash(password, saltRounds);
       let createUser= await userModel.create(data)
       res.status(201).send({status:true,message:"sucessfuly created the user",data:createUser}) 
 
-
-           
-    
-       
-        
-    
 
    } catch (error) {
         res.status(500).send({ msg: error.message }) 
@@ -186,6 +250,7 @@ const userlogin = async function (req, res) {
 
 
       const checkedUser = await userModel.findOne({ email });
+      if(!checkedUser)return res.status(404).send({ status: false, msg: "no user with this emailId" })
       let userId= checkedUser._id.toString()
       const match = await bcrypt.compare(password, checkedUser.password);
 
@@ -220,6 +285,8 @@ const userlogin = async function (req, res) {
   res.status(500).send({ status: false, msg: error.message })
 }
 }
+
+
 
 const UpdateUserData = async function(req,res){
   data = req.query|| req.body
