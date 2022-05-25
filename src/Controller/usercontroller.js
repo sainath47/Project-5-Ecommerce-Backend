@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const aws= require("aws-sdk");
 
-
+const ObjectId = require("mongoose").Types.ObjectId;
 
 
 aws.config.update({
@@ -196,10 +196,58 @@ const userlogin = async function (req, res) {
     catch (error) { res.status(500).send({ msg: error.message }) }
   };
   
+  const updateUserById = async function (req, res) {
+    try {
+        let Id = req.params.userId
+        // ID validation
+        if (!ObjectId.isValid(Id)) return res.status(400).send({ status: false, msg: "Not a valid user ID" })
+        // Id verification
+        // let userDetails = await userModel.findById(Id)
+        // if (userDetails) return res.status(404).send({ status: false, msg: "User not found." })
+
+        let updatedData = req.body
+        let updatedFname = req.body.fname
+        let updatedLname = req.body.lname
+        let updatedEmail= req.body.email
+        let updatedProfileImage = req.body.profileImage
+        let updatedPhone = req.body.phone
+        let updatedPassword= req.body.password
+        let updatedAddress=req.body.address
+
+        if (Object.entries(updatedData).length === 0) return res.status(400).send({ status: false, msg: "NO INPUT BY USER" })//for update required filled can't be blank
+        // if (!isValid(updatedFname))
+        //     return res.status(400).send({ status: false, msg: "fname can not be empty" })
+        
+        // if (!isValid(updatedLname))
+        //     return res.status(400).send({ status: false, msg: "lname can not be empty" })
+        
+        // if (!isValid(updatedEmail))
+        //     return res.status(400).send({ status: false, msg: "email can not be empty" })
+        
+        // // if (!isValid(updatedProfileImage))
+        // //     return res.status(400).send({ status: false, msg: "profile image can not be empty" })
+        
+        // if (!isValid(updatedPhone))
+        //     return res.status(400).send({ status: false, msg: "phone can not be empty" })
+        
+        // if (!isValid(updatedPassword))
+        //     return res.status(400).send({ status: false, msg: "password can not be empty" })
+
+        let updatedUser = await userModel.findOneAndUpdate({ _id: Id },
+            {
+                $set: { fname: updatedFname, lname: updatedLname, email: updatedEmail, profileImage: updatedProfileImage,phone:updatedPhone,password:updatedPassword,address:updatedAddress, date:Date.now() },
+    
+            }, { new: true })
+        return res.status(200).send({ status: true, data: updatedUser })
+    }
+    catch (err) {
+        console.log(err.message)
+        return res.status(500).send({ status: false, msg: err.message })
+    }
+}
   
-  
 
 
 
 
-module.exports = { createUser , userlogin}
+module.exports = { createUser , userlogin,updateUserById}
