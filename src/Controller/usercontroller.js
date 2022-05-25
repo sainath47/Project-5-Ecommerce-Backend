@@ -68,17 +68,26 @@ const createUser = async function (req, res) {
         }else{
             const {fname, lname, email, phone, password}=body
 
+
             if(!isValid(fname)){
                 return res.status(400).send({status:false, msg: "first name is required"})
             }
+            
+            let uniqueFname = await userModel.findOne({fname})
+            if(uniqueFname)  return res.status(400).send({status:false, msg: "first name already exist"})
 
             if(!isValid(lname)){
                 return res.status(400).send({status:false, msg: "last name is required"})
             }
 
+
+
             if(!isValid(email)){
                 return res.status(400).send({status:false, msg: "email is required"})
             }
+            
+            let uniqueEmail = await userModel.findOne({email})
+            if(uniqueEmail)  return res.status(400).send({status:false, msg: "email already exist"})
 
             if(!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)){
                 return res.status(400).send({status:false, msg: "Please enter a valid email"})
@@ -89,6 +98,9 @@ const createUser = async function (req, res) {
             if(!isValid(phone)){
                 return res.status(400).send({status:false, msg: "phone is required"})
             }
+            let uniquePhone = await userModel.findOne({phone})
+            if(uniquePhone)  return res.status(400).send({status:false, msg: "phone already exist"})
+
 
             if(! /^(\+\d{1,3}[- ]?)?\d{10}$/.test(phone)){
                 return res.status(400).send({status:false, msg: "please enter a valid email"})
@@ -100,17 +112,17 @@ const createUser = async function (req, res) {
             }
 
             
-        //     if(!isValid(street)){
-        //         return res.status(400).send({status:false, msg: "street is required"})
-        //     }
+            if(!isValid(address.shipping.street)){
+                return res.status(400).send({status:false, msg: "street is required"})
+            }
 
-        //     if(!isValid(city)){
-        //         return res.status(400).send({status:false, msg: "street is required"})
-        //     }
+            if(!isValid(city)){
+                return res.status(400).send({status:false, msg: "street is required"})
+            }
 
-        //     if(!isValid(pincode)){
-        //         return res.status(400).send({status:false, msg: "street is required"})
-        //     }
+            if(!isValid(pincode)){
+                return res.status(400).send({status:false, msg: "street is required"})
+            }
         }
     
         let password = req.body.password
@@ -196,10 +208,30 @@ const userlogin = async function (req, res) {
     catch (error) { res.status(500).send({ msg: error.message }) }
   };
   
+  const getUserdata = async function(req, res){
+    try{
   
+      let alldata = await userModel.find({...req.query,isDeleted: false })
+     
+      if (alldata.length == 0) return res.status(404).send({ status: false, msg: "no user found" })
+      return res.status(200).send({ status: true, msg : "Success",data: alldata })
+
+} catch (error) {
+  res.status(500).send({ status: false, msg: error.message })
+}
+}
+
+const UpdateUserData = async function(req,res){
+  data = req.query|| req.body
+let userId = req.params.userId
+   let updatedData = await userModel.findOneAndUpdate({_id:userId,isDeleted: false },{...data} ,{new:true})
+  if (!updatedData) return res.status(404).send({ status: false, msg: "no user found" })
+  return res.status(200).send({ status: true, msg : "Success",data: updatedData })
+
+}
   
 
 
 
 
-module.exports = { createUser , userlogin}
+module.exports = { createUser , userlogin,getUserdata,UpdateUserData}
