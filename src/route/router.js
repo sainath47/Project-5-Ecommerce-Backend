@@ -9,20 +9,13 @@ const { authentication, authorization } = require('../middlewares/auth.js');
 
 
 
-
-
-
-
-
 router.post('/register',createUser)
+
 router.post('/login',userlogin)
-
-router.put('/user/:userId/profile',authorization,updateUserById)
-
 
 router.get('/user/:userId/profile',authentication,getUserdata)
 
-
+router.put('/user/:userId/profile',authorization,updateUserById)
 
 
 
