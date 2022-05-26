@@ -1,11 +1,10 @@
 const express = require('express');
 const route = require('./route/router.js');
-const { default : mongoose } = require('mongoose');
+const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const app = express();
 
 const multer= require("multer");
-const { AppConfig } = require('aws-sdk');
 app.use( multer().any())
 
 app.use(bodyParser.json());
