@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const userModel = require("../model/usermodel.js");
+const userModel = require("../Models/userModel.js");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
