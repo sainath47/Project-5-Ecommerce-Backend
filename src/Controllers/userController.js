@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const userModel = require("../model/usermodel.js");
+const userModel = require("../Models/userModel.js");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -192,9 +192,9 @@ const createUser = async function (req, res) {
             return res.status(400).send({ status: false, message: "Phone number is already exist" });
         }
     
-        let password = req.body.password;
-        const { fname, lname, email, phone, address } = req.body;
-        console.log(password);
+        // let password = req.body.password;
+        // const { fname, lname, email, phone, address } = req.body;
+        // console.log(password);
     
         let files = req.files
         if (files && files.length > 0) {
