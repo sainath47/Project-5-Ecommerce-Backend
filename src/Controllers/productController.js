@@ -95,10 +95,13 @@ const createProduct = async function (req, res) {
             
             //validation for style
             if(!isValid(style)) return res.status(400).send({status:false,msg:"please enter valid style"})
-            console.log(isFreeShipping)
-// if(isFreeShipping){
-//   if(isFreeShipping !== "true" || "false")return res.status(400).send({status:false,message:"isFreeShipping is boolean"})
-//   if(isFreeShipping==null)return res.status(400).send({status:false,message:"isFreeShipping is boolean"})
+
+            console.log(typeof(isFreeShipping))
+//             let arr = ["true", "false"]
+//             if(isValid(isFreeShipping)){
+//               console.log(isFreeShipping!= "true" )
+//   if(isFreeShipping != "true" || isFreeShipping != "false")return res.status(400).send({status:false,message:"isFreeShipping is boolean"})
+//   if(isFreeShipping==="")return res.status(400).send({status:false,message:"isFreeShipping is not empty string"})
 // }
             
 
@@ -235,23 +238,26 @@ if(isFreeShipping)if(isFreeShipping !== true || false)return res.status(400).sen
 
 if(currencyFormat)if(currencyFormat != "₹") return res.status(400).send({ status: false, msg: "currencyFormat should be in ₹ only" })
 
-
+// console.log(typeof(availableSizes))
 if(availableSizes){
 
   let updateSize =productDetails.availableSizes
-  productDetails.availableSizes.push(availableSizes)
- data["availableSizes"]=updateSize
 
-// for(let i=0;i<updateSize.length;i++){
+
+for(let i=0;i<updateSize.length;i++){
  
-// if(!(availableSizes==updateSize[i])){
-//    return res.status(200).send({ status: false,msg:"size already present", data:productDetails});
+if(availableSizes===updateSize[i]){
+
+  console.log(updateSize[i])
+   return res.status(200).send({ status: false,msg:"size already present"});
+  
+
+  }
 
 
-//   }
-
-
-// }
+}
+productDetails.availableSizes.push(availableSizes)
+data["availableSizes"]=updateSize
 
 }
 
@@ -319,7 +325,7 @@ const deleteProduct = async  function(req, res)  {
       if (!productdata) {
           return res.status(404).send({ status: false, message: "Product Data is deleted" });
       }
-      let deleteproduct = await productModel.findOneAndUpdate({ _id: ProductId }, { isDeleted: true, deletedAt: Date() }, { new: true });
+     await productModel.findOneAndUpdate({ _id: ProductId }, { isDeleted: true, deletedAt: Date() }, { new: true });
       return res.status(200).send({ status: true, message: 'deleted Successfully' });
 
   } catch (err) {
