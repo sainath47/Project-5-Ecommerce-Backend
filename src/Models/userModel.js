@@ -33,11 +33,11 @@ const userSchema = mongoose.Schema(
         },
         profileImage: {
             type: String,
-            require: [true, "profile image is required"]
+            required: [true, "profile image is required"]
         },
         phone: {
             type: String,
-            requred: [true, "phone is required"],
+            required: [true, "phone is required"],
             validation: [validatePhone, "please enter a valid phone"],
             unique: true,
             trim: true
