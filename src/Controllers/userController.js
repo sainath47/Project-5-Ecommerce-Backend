@@ -309,8 +309,9 @@ const updateUserById = async function (req, res) {
 
     let data = req.body;
 
-    //-------for update required filled can't be blank
 
+    //-------for update required filled can't be blank
+    // let profileImage=req.profileImage
     if (Object.keys(req.body).length == 0 && (!req.profileImage))
             return res.status(400).send({ status: false, msg: "NO INPUT BY USER" });
 
@@ -395,7 +396,7 @@ const updateUserById = async function (req, res) {
     let files = req.files      // whatever the key is , doesnt matter
     if (files && files.length > 0) {
       var uploadedprofileImage = await uploadFile(files[0])
-      data["profileImage"] = uploadedprofileImage
+     
 
     }
 
@@ -403,15 +404,15 @@ const updateUserById = async function (req, res) {
       { _id: userId },
       {
         $set: {
-          ...data,
+          fname, lname, email, phone, password,profileImage:uploadedprofileImage,
           "address.shipping.city": shippingCity,
           "address.shipping.street": shippingStreet,
           "address.shipping.pincode": shippingPincode,
           "address.billing.city": billingCity,
           "address.billing.street": billingStreet,
           "address.billing.pincode": billingPincode,
-          date: Date.now(),
-        },
+          updatedAt: Date.now()
+        }
       },
       { new: true }
     );

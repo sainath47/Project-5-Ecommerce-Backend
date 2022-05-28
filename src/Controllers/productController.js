@@ -62,8 +62,9 @@ const createProduct = async function (req, res) {
            } else {
 
            let availableSizes = req.body.availableSizes
+       
 
-             const { title, description, price, currencyId, currencyFormat, style,isFreeShipping ,installments } = data;
+             const { title, description, price, currencyId, currencyFormat, style,isFreeShipping ,installments} = data;
 
             //---------------------------validation start from here--------------------------------------------------------------//
 
@@ -117,17 +118,18 @@ const createProduct = async function (req, res) {
 
           if(isFreeShipping==="")return res.status(400).send({status:false,message:"isFreeShipping is not empty string"})
 
-          // if(!["true", "false"].includes(isFreeShipping)) return res.status(400).send({ status: false, msg: "isFreeShipping is boolean" })
+          if(isFreeShipping)
+        {  if(!["true", "false"].includes(isFreeShipping)) return res.status(400).send({ status: false, msg: "isFreeShipping is boolean" })}
 
           //-------------validation for avaiable Sizes--(available sizes=> array of strings)--------------
-
-          if (availableSizes.length == 0 || !availableSizes) return res.status(400).send({ status: false, msg: "available size cannot be empty" })
-
-          let arr = availableSizes.split(" ")
+       
+       
+          if(availableSizes.length == 0 || !availableSizes) return res.status(400).send({status:false,msg: 'available size cannot be empty'})
+          let arr = availableSizes.split(",").map(el => el.trim())
+          for(let size of arr){
+              if(!["XS", "X", "S", "M", "L", "XL", "XXL"].includes(size)) return res.status(400).send({status:false,msg:"size parmeter can only take XS , X , S , M , L , XL , XXL these values"})
+          }
           data["availableSizes"] = arr
-          for (let size of arr) {
-            if (!["XS", "X", "S", "M", "L", "XL", "XXL"].includes(size)) return res.status(400).send({ status: false, msg: "size should be only in parmeter XS , X , S , M , L , XL , XXL " })
-         }
 
          //-------------validation for installments------------
 
@@ -149,23 +151,24 @@ const createProduct = async function (req, res) {
               return res.status(201).send({ status: true, msg: "product created successfully", data: createProduct })
 
       } catch (err) {
-          console.log(err.message)
+         
              return res.status(500).send({ status: false, msg: err.message })
       }
 
   }
 
 
-    const isValidName = (name) => {
-         return /^[a-zA-Z ]{3,30}$/.test(name)
-     }
-
-     const isValidAvailableSizes = (size) => {
-           return ["S", "XS", "M", "X", "L", "XXL", "XL"].includes(size) == true
-    }
+ 
 
 
 //-------------------------------------get product by query controller-----------------------------------------------------------------------//
+const isValidName = (name) => {
+  return /^[a-zA-Z ]{3,30}$/.test(name)
+}
+
+const isValidAvailableSizes = (size) => {
+    return ["S", "XS", "M", "X", "L", "XXL", "XL"].includes(size) == true
+}
 
 const getProductByQuery = async (req, res) => {
        try {
@@ -182,6 +185,14 @@ const getProductByQuery = async (req, res) => {
              if (!isValidAvailableSizes(size))
                    return res.status(400).send({ status: false, message: `Size should be among ${["S", "XS", "M", "X", "L", "XXL", "XL"]}` })
              filterQuery['availableSizes'] = size
+
+            //  let arr = size.split(",").map(el => el.trim())
+          
+            //  for(let elem of arr){
+            //      if(!["XS", "X", "S", "M", "L", "XL", "XXL"].includes(elem)) return res.status(400).send({status:false,msg:"size parmeter can only take XS , X , S , M , L , XL , XXL these values"})
+            //  }
+            //  filterQuery["availableSizes"] = arr
+
           }
 
           if (priceGreaterThan) {
@@ -274,33 +285,59 @@ const updateProductById = async function (req, res) {
          //------------validation for currencyId-----------
          if (currencyId) if (!(/\bINR\b/.test(currencyId))) return res.status(400).send({ status: false, message: "only INR , no other currency is accepted" })
          
-         //------------validation for available sizes-------
-         if (availableSizes) if (!(/^(S|XS|M|X|L|XXL|XL)$/.test(availableSizes))) return res.status(400).send({ status: false, message: '"S", "XS", "M", "X", "L", "XXL", "XL" only this values' })
+        //  //------------validation for available sizes-------
+        //  if (availableSizes) if (!(/^(S|XS|M|X|L|XXL|XL)$/.test(availableSizes))) return res.status(400).send({ status: false, message: '"S", "XS", "M", "X", "L", "XXL", "XL" only this values' })
+
+         
 
          //------------validation for installments-----------
          if (installments) if (!(/^(0|[1-9][0-9]*)$/.test(installments))) return res.status(400).send({ status: false, message: "installments is numeric" })
 
          //-------------validation for isfree shipping--------
-        //  if (isFreeShipping) 
-        //    if (isFreeShipping !== true || false) return res.status(400).send({ status: false, message: "isFreeShipping isboolean" })
+     
+         if(isFreeShipping==="")return res.status(400).send({status:false,message:"isFreeShipping is not empty string"})
+
+         if(isFreeShipping)
+       {  if(!["true", "false"].includes(isFreeShipping)) return res.status(400).send({ status: false, msg: "isFreeShipping is boolean" })}
+
+
+      
+
+       
 
          //------------validation for currency format----------
          if (currencyFormat) if (currencyFormat != "₹") return res.status(400).send({ status: false, msg: "currencyFormat should be in ₹ only" })
 
          //-------------validation for update size(not allowed to update same size which is already present)
+    
+        //  if(availableSizes==="")return res.status(400).send({status:false,message:"isFreeShipping is not empty string"})
          if (availableSizes) {
-          let updateSize = productDetails.availableSizes
-             for (let i = 0; i < updateSize.length; i++) {
-                if (availableSizes === updateSize[i]) {
-                   return res.status(200).send({ status: false, msg: "size already present" });
-                }
-            }
+          let arr = availableSizes.split(",").map(el => el.trim())
+          for(let availableSizes of arr){
+            if(!["XS", "X", "S", "M", "L", "XL", "XXL"].includes(availableSizes)) return res.status(400).send({status:false,msg:"size parmeter can only take XS , X , S , M , L , XL , XXL these values"})
+        }
+          // let updateSize = productDetails.availableSizes
+          //    for (let i = 0; i < updateSize.length; i++) {
+          //     for(let j = 0; j < availableSizes.length; j++)
+          //     {  if (availableSizes[j] === updateSize[i]) {
+          //          return res.status(200).send({ status: false, msg: `size already present, remove ${availableSizes[j]}` });}
+          //       }
+          //   }
+          //   for(let elem of arr){
+          //     if(!updateSize.includes(elem)) return res.status(400).send({status:false,msg:"already included size in availableSizes key",data:productDetails})
+          // }
+          //   productDetails.availableSizes.push(availableSizes)
+          //   data["availableSizes"] = updateSize
 
-            productDetails.availableSizes.push(availableSizes)
-            data["availableSizes"] = updateSize
 
+          //   if(availableSizes.length == 0 || !availableSizes) return res.status(400).send({status:false,msg: 'available size cannot be empty'})
+       
+        
+            data["availableSizes"] = arr
+   
       }
 
+    
        //------------upload to s3 and get the uploaded link----
 
         let files = req.files                   // whatever the key is , doesnt matter
