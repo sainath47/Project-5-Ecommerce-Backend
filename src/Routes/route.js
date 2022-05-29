@@ -4,6 +4,7 @@ const router = express.Router();
 
 const{createUser,userlogin,getUserdata,updateUserById}= require('../Controllers/userController.js')
 const{createProduct, getProductByQuery, getProductById, deleteProduct, updateProductById}=require('../Controllers/productController')
+const{ getCart,deleteCart } =require('../Controllers/cartController')
 
 const { authentication, authorization } = require('../Middlewares/auth.js');
 
@@ -20,6 +21,10 @@ router.get('/products',getProductByQuery)
 router.get('/products/:productId',getProductById)
 router.delete('/products/:productId',deleteProduct)
 router.put('/products/:productId',updateProductById)
+
+//cart
+router.get('/users/:userId/cart',authentication,getCart)
+router.delete('/users/:userId/cart',authorization,deleteCart )
 
 
 

@@ -48,7 +48,11 @@ const isValidObjectId = function (ObjectId) {
     return mongoose.Types.ObjectId.isValid(ObjectId)
 }
 
-//-----------------------------------------create product controller-------------------------------------------------------------//
+
+
+//============================================================ create product controller ==================================================================//
+
+
 
 const createProduct = async function (req, res) {
 
@@ -92,7 +96,7 @@ const createProduct = async function (req, res) {
 
           if (Number(price) <= 0) return res.status(400).send({ status: false, msg: "price is not valid" })
 
-          if (!/^[1-9]\d{0,7}(?:\.\d{1,4})?$/.test(price)) return res.status(400).send({ status: false, msg: "please enter valid price" })
+          if (!/^[1-9]\d{0,7}(?:\.\d{1,4})?$/.test(price)) return res.status(400).send({ status: false, msg: "price should be valid number/decimal" })
 
           //------------validatio for currencyId---------
 
@@ -118,11 +122,11 @@ const createProduct = async function (req, res) {
 
           if(isFreeShipping==="")return res.status(400).send({status:false,message:"isFreeShipping is not empty string"})
 
-          if(isFreeShipping)
-        {  if(!["true", "false"].includes(isFreeShipping)) return res.status(400).send({ status: false, msg: "isFreeShipping is boolean" })}
+          if(isFreeShipping){
+              if(!["true", "false"].includes(isFreeShipping)) return res.status(400).send({ status: false, msg: "isFreeShipping is boolean" })
+          }
 
           //-------------validation for avaiable Sizes--(available sizes=> array of strings)--------------
-       
        
           if(availableSizes.length == 0 || !availableSizes) return res.status(400).send({status:false,msg: 'available size cannot be empty'})
           let arr = availableSizes.split(",").map(el => el.trim())
@@ -158,10 +162,11 @@ const createProduct = async function (req, res) {
   }
 
 
- 
+
+//============================================== get product by query controller =========================================================================//
 
 
-//-------------------------------------get product by query controller-----------------------------------------------------------------------//
+
 const isValidName = (name) => {
   return /^[a-zA-Z ]{3,30}$/.test(name)
 }
@@ -177,7 +182,7 @@ const getProductByQuery = async (req, res) => {
 
           let { size, name, priceGreaterThan, priceLessThan } = queryParams
 
-          const filterQuery = { isDeleted: false, ...req.query, }
+          const filterQuery = { isDeleted: false, ...req.query }
 
           if (size) {
              if (!size) return res.status(400).send({ status: false, message: "provide size" })
@@ -186,14 +191,7 @@ const getProductByQuery = async (req, res) => {
                    return res.status(400).send({ status: false, message: `Size should be among ${["S", "XS", "M", "X", "L", "XXL", "XL"]}` })
              filterQuery['availableSizes'] = size
 
-            //  let arr = size.split(",").map(el => el.trim())
-          
-            //  for(let elem of arr){
-            //      if(!["XS", "X", "S", "M", "L", "XL", "XXL"].includes(elem)) return res.status(400).send({status:false,msg:"size parmeter can only take XS , X , S , M , L , XL , XXL these values"})
-            //  }
-            //  filterQuery["availableSizes"] = arr
-
-          }
+            }
 
           if (priceGreaterThan) {
              if (!(/^(0|[1-9][0-9]*)$/.test(priceGreaterThan)))
@@ -217,7 +215,7 @@ const getProductByQuery = async (req, res) => {
           const products = await productModel.find({ ...filterQuery }).sort({ price: 1 })
 
     
-            if (!(products.length)) return res.status(404).send({ status: false, message: 'No products found' })
+          if (!(products.length)) return res.status(404).send({ status: false, message: 'No products found' })
                 return res.status(200).send({ status: true, message: "Success", data: products })
 
         }catch (err) {
@@ -226,7 +224,11 @@ const getProductByQuery = async (req, res) => {
 
   }
 
-  //-----------------------------get product by Id controller----------------------------------------------------------------------//
+
+
+  //======================================= get product by Id controller =========================================================================//
+
+
 
   const getProductById = async function (req, res) {
 
@@ -249,7 +251,10 @@ const getProductByQuery = async (req, res) => {
    }
 
 
-//------------------------------------update product controller-----------------------------------------------------------------//
+
+//=============================================== update product controller =================================================================//
+
+
 
 const updateProductById = async function (req, res) {
 
@@ -273,83 +278,77 @@ const updateProductById = async function (req, res) {
    
          let availableSizes = req.body.availableSizes
 
-         let { title, price, currencyId, currencyFormat, isFreeShipping, installments } = data;
+         let { title,description, price, currencyId, currencyFormat, isFreeShipping, style,installments} = data;
 
          //------------checking for title alreay exits or not-------------
+         if(title==="")return res.status(400).send({status:false,message:"title can't be empty"})
+
          let findTitle = await productModel.findOne({ title })
          if (findTitle) return res.status(400).send({ status: false, message: "product already with this title" })
-         
+
+         //-----------validation for description----------
+         if(description==="")return res.status(400).send({status:false,message:"description can't be empty"})
+
          //-----------validation for price----------------
-         if (price) if (!(/^(0|[1-9][0-9]*)$/.test(price))) return res.status(400).send({ status: false, message: "price is numeric" })
+         if(price==="")return res.status(400).send({status:false,message:"price can't be empty"})
+
+         if(price){
+           if (!Number(price)) return res.status(400).send({ status: false, msg: "please enter valid price" })
+           if (Number(price) <= 0) return res.status(400).send({ status: false, msg: "price is not valid" })
+         }
+
+         if (price) if (!(/^[1-9]\d{0,7}(?:\.\d{1,4})?$/.test(price))) return res.status(400).send({ status: false, message: "price should be in numeric/decimal" })
 
          //------------validation for currencyId-----------
+         if(currencyId==="")return res.status(400).send({status:false,message:"currencyId can't be empty"})
+
          if (currencyId) if (!(/\bINR\b/.test(currencyId))) return res.status(400).send({ status: false, message: "only INR , no other currency is accepted" })
-         
-        //  //------------validation for available sizes-------
-        //  if (availableSizes) if (!(/^(S|XS|M|X|L|XXL|XL)$/.test(availableSizes))) return res.status(400).send({ status: false, message: '"S", "XS", "M", "X", "L", "XXL", "XL" only this values' })
-
-         
-
-         //------------validation for installments-----------
-         if (installments) if (!(/^(0|[1-9][0-9]*)$/.test(installments))) return res.status(400).send({ status: false, message: "installments is numeric" })
-
-         //-------------validation for isfree shipping--------
-     
-         if(isFreeShipping==="")return res.status(400).send({status:false,message:"isFreeShipping is not empty string"})
-
-         if(isFreeShipping)
-       {  if(!["true", "false"].includes(isFreeShipping)) return res.status(400).send({ status: false, msg: "isFreeShipping is boolean" })}
-
-
-      
-
-       
 
          //------------validation for currency format----------
+         if(currencyFormat==="")return res.status(400).send({status:false,message:"currencyFormat can't be empty"})
+
          if (currencyFormat) if (currencyFormat != "₹") return res.status(400).send({ status: false, msg: "currencyFormat should be in ₹ only" })
 
-         //-------------validation for update size(not allowed to update same size which is already present)
-    
-        //  if(availableSizes==="")return res.status(400).send({status:false,message:"isFreeShipping is not empty string"})
-         if (availableSizes) {
-          let arr = availableSizes.split(",").map(el => el.trim())
+         //-------------validation for isfree shipping--------
+         if(isFreeShipping==="")return res.status(400).send({status:false,message:"isFreeShipping is not empty string"})
+
+         if(isFreeShipping){
+             if(!["true", "false"].includes(isFreeShipping)) return res.status(400).send({ status: false, msg: "isFreeShipping is boolean" })
+         }
+         
+         //-------------validation for style----------------
+         if(style==="")return res.status(400).send({status:false,message:"style can't be empty"})
+
+        //------------validation for available sizes-------
+        if(availableSizes==="")return res.status(400).send({status:false,message:"availableSizes can't be empty"})
+
+        if (availableSizes) {
+        let arr = availableSizes.split(",").map(el => el.trim())
           for(let availableSizes of arr){
-            if(!["XS", "X", "S", "M", "L", "XL", "XXL"].includes(availableSizes)) return res.status(400).send({status:false,msg:"size parmeter can only take XS , X , S , M , L , XL , XXL these values"})
-        }
-          // let updateSize = productDetails.availableSizes
-          //    for (let i = 0; i < updateSize.length; i++) {
-          //     for(let j = 0; j < availableSizes.length; j++)
-          //     {  if (availableSizes[j] === updateSize[i]) {
-          //          return res.status(200).send({ status: false, msg: `size already present, remove ${availableSizes[j]}` });}
-          //       }
-          //   }
-          //   for(let elem of arr){
-          //     if(!updateSize.includes(elem)) return res.status(400).send({status:false,msg:"already included size in availableSizes key",data:productDetails})
-          // }
-          //   productDetails.availableSizes.push(availableSizes)
-          //   data["availableSizes"] = updateSize
-
-
-          //   if(availableSizes.length == 0 || !availableSizes) return res.status(400).send({status:false,msg: 'available size cannot be empty'})
+              if(!["XS", "X", "S", "M", "L", "XL", "XXL"].includes(availableSizes)) return res.status(400).send({status:false,msg:"size parmeter can only take XS , X , S , M , L , XL , XXL these values"})
+          }
+          
+          data["availableSizes"] = arr  
+         }
        
-        
-            data["availableSizes"] = arr
-   
-      }
+         //------------validation for installments-----------
+         if(installments==="")return res.status(400).send({status:false,message:"installments can't be empty"})
+
+         if (installments) if (!(/^(0|[1-9][0-9]*)$/.test(installments))) return res.status(400).send({ status: false, message: "installments is numeric" })
 
     
-       //------------upload to s3 and get the uploaded link----
+        //------------upload to s3 and get the uploaded link----
 
         let files = req.files                   // whatever the key is , doesnt matter
         if (files && files.length > 0) {                    
          var uploadedProductImage = await uploadFile(files[0])
          data["productImage"] = uploadedProductImage
 
-       }
+        }
 
        let updatedProduct = await productModel.findOneAndUpdate({ _id: productId, isDeleted: false },{...data,updatedAt: Date.now()},{ new: true });
 
-       if (!updatedProduct) return res.status(404).send({ status: false, message: "file not found" })
+       if (!updatedProduct) return res.status(404).send({ status: false, message: "product not found" })
 
        return res.status(200).send({ status: true, msg: "successfully updated", data: updatedProduct });
 
@@ -360,7 +359,11 @@ const updateProductById = async function (req, res) {
 
 };
 
-//------------------------------------delete product controller-----------------------------------------------------------------//
+
+
+//================================================ delete product controller ====================================================================//
+
+
 
 const deleteProduct = async function (req, res) {
 

@@ -52,7 +52,11 @@ const isValidObjectId = function (ObjectId) {
      return mongoose.Types.ObjectId.isValid(ObjectId)
 }
 
-//---------------------------------------create user controller--------------------------------------------------------------//
+
+
+//============================================================ create user controller ==========================================================================//
+
+
 
 const createUser = async function (req, res) {
 
@@ -216,7 +220,10 @@ const createUser = async function (req, res) {
 };
 
 
-//-----------------------------------login user controller---------------------------------------------------------------------//
+
+//================================================ login user controller ====================================================================//
+
+
 
 const userlogin = async function (req, res) {
 
@@ -265,7 +272,11 @@ const userlogin = async function (req, res) {
 
  };
 
-//-------------------------------------get user controller-----------------------------------------------------//
+
+
+//======================================================== get user controller ==============================================================//
+
+
 
 const getUserdata = async function (req, res) {
 
@@ -288,7 +299,11 @@ const getUserdata = async function (req, res) {
 
 }
 
-//---------------------------------update user controller----------------------------------------------------------------//
+
+
+//=================================================== update user controller ===================================================================//
+
+
 
 const updateUserById = async function (req, res) {
 
@@ -296,12 +311,12 @@ const updateUserById = async function (req, res) {
 
     let userId = req.params.userId;
 
-    //-------- Id validation
+    //-------- Id validation---------
 
     if (!isValidObjectId(userId))
             return res.status(400).send({ status: false, msg: "Not a valid user ID" });
 
-    //---------Id verification
+    //---------Id verification-----------
 
     let userDetails = await userModel.findById(userId);
     if (!userDetails)
@@ -310,24 +325,27 @@ const updateUserById = async function (req, res) {
     let data = req.body;
 
 
-    //-------for update required filled can't be blank
-    // let profileImage=req.profileImage
+    //-------for update required filled can't be blank---------
+    
     if (Object.keys(req.body).length == 0 && (!req.profileImage))
             return res.status(400).send({ status: false, msg: "NO INPUT BY USER" });
 
     let { fname, lname, email, phone, password, address } = data;
     
-    //-------validation of fname
+    //-------validation of fname-------
+    if(fname==="")return res.status(400).send({status:false,message:"fname can't be empty"})
     if (fname) {
       if (!isValid(fname)) return res.status(400).send({ status: false, msg: "first Name is not valid" });
     }
 
-    //------- validation of lname
+    //------- validation of lname-------
+    if(lname==="")return res.status(400).send({status:false,message:"lname can't be empty"})
     if (lname) {
       if (!isValid(lname)) return res.status(400).send({ status: false, msg: "last Name is not valid" });
     }
 
-    //--------- valiation of email
+    //--------- valiation of email-------
+    if(email==="")return res.status(400).send({status:false,message:"email can't be empty"})
     if (email) {
       if (!isValid(email)) return res.status(400).send({ status: false, msg: "email Id is not valid" });
 
@@ -340,7 +358,8 @@ const updateUserById = async function (req, res) {
 
     }
 
-    //-----------validation of phone
+    //-----------validation of phone--------
+    if(phone==="")return res.status(400).send({status:false,message:"phone can't be empty"})
     if (phone) {
        if (!/^[6-9]\d{9}$/.test(phone)) return res.status(400).send({ status: false, message: "phone number should be valid number", });
 
@@ -348,21 +367,23 @@ const updateUserById = async function (req, res) {
         if (dupPhone) return res.status(400).send({ status: false, msg: "phone is already registered" });
     }
     
-    //------------validation of pasword
+    //------------validation of pasword-------
+    if(password==="")return res.status(400).send({status:false,message:"password can't be empty"})
     if (password) {
       if (password.length < 8 || password.length > 15) return res.status(400).send({ status: false, msg: "Password length should be 8 to 15" });
-      
+
       const saltRounds = 10
-      data["password"] = await bcrypt.hash(password, saltRounds);
+    var encryptedPassword = await bcrypt.hash(password, saltRounds);
+    
     }
     
-    //--------------validation of shipping & billing address
+    //--------------validation of shipping & billing address---------
     if (address) {
       if (typeof (address) == 'string') address = JSON.parse(address)
-      if (address.shipping) {
-        if (address.shipping.city) {
-          if (!isValid(address.shipping.city)) return res.status(400).send({ status: false, msg: 'shipping address city is not valid' })
-          var shippingCity = address.shipping.city;
+        if (address.shipping) {
+          if (address.shipping.city) {
+            if(!isValid(address.shipping.city)) return res.status(400).send({ status: false, msg: 'shipping address city is not valid' })
+            var shippingCity = address.shipping.city;
         }
         if (address.shipping.street) {
           if (!isValid(address.shipping.street)) return res.status(400).send({ status: false, msg: 'shipping address street is not valid' })
@@ -391,7 +412,7 @@ const updateUserById = async function (req, res) {
 
     }
     
-    //------------upload profile image to s3 and get the uploaded link
+    //------------upload profile image to s3 and get the uploaded link--------
 
     let files = req.files      // whatever the key is , doesnt matter
     if (files && files.length > 0) {
@@ -404,7 +425,7 @@ const updateUserById = async function (req, res) {
       { _id: userId },
       {
         $set: {
-          fname, lname, email, phone, password,profileImage:uploadedprofileImage,
+          fname, lname, email, phone, profileImage:uploadedprofileImage,password:encryptedPassword,
           "address.shipping.city": shippingCity,
           "address.shipping.street": shippingStreet,
           "address.shipping.pincode": shippingPincode,
