@@ -48,6 +48,7 @@ if(!isValidObjectId(cartId))return  res.status(400).send({status:false,message:"
         if(!cart) return  res.status(400).send({status:false,message:"no cart with thisCartId"})
 let totalPrice = productPrice* quantity
 
+
        
     
 let cartIemsLength =cart.items.length
