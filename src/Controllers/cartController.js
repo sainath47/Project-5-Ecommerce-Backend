@@ -25,7 +25,7 @@ const createCartAndAddToCart = async function (req, res) {
         let productId = items.productId
         let quantity = items.quantity
         // if (!quantity) data.items["quantity"] = 1
-        console.log()
+        // console.log()
         if (!isValidObjectId(productId)) return res.status(400).send({ status: false, message: "invalid productId" })
 
         //-----------validation for quantity-----------
@@ -51,8 +51,10 @@ const createCartAndAddToCart = async function (req, res) {
             if (!isValidObjectId(cartId)) return res.status(400).send({ status: false, message: "invalid Cart Id" })
 
             let cart = await cartModel.findOne({ _id: cartId })
-            if (!cart) return res.status(400).send({ status: false, message: "no cart with this Cart Id" })
+            if (!cart) return res.status(404).send({ status: false, message: "no cart with this Cart Id" })
             let totalPrice = productPrice * quantity
+
+if(cart.userId != userId)return res.status(404).send({ status: false, message: "userId of cart not matched with user" })
 
             let cartIemsLength = cart.items.length
             for (let i = 0; i < cart.items.length; i++) {
