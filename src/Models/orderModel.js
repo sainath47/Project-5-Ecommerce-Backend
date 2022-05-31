@@ -7,7 +7,7 @@ const orderSchema = mongoose.Schema(
     userId: {
         type: ObjectId,
         ref: "User",
-        required: [true, "user Id is rwquired"]
+        required: [true, "user Id is required"]
     },
     items: [{
       productId: {
