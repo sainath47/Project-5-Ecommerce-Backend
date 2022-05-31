@@ -23,11 +23,11 @@ router.delete('/products/:productId',deleteProduct)
 router.put('/products/:productId',updateProductById)
 
 //cart
-router.post("/users/:userId/cart",createCartAndAddToCart)
-router.put('/users/:userId/cart',updateCart)
-router.get('/users/:userId/cart',getCart)
-router.delete('/users/:userId/cart',deleteCart )
-//authorization in all above apis
+router.post("/users/:userId/cart",authorization,createCartAndAddToCart)
+router.put('/users/:userId/cart',authorization,updateCart)
+router.get('/users/:userId/cart',authorization,getCart)
+router.delete('/users/:userId/cart',authorization,deleteCart )
+
 
 
 module.exports = router
