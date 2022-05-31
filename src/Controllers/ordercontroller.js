@@ -1,8 +1,10 @@
 const orderModel = require("../Models/orderModel")
-
+const userModel = require("../Models/userModel")
+const cartModel = require('../Models/cartModel')
+const mongoose = require('mongoose')
 
 const isvalidRequestBody = function (requestBody) {
-    return Object.keys(requestbody).length > 0;
+    return Object.keys(requestBody).length > 0;
 }
 
 const isValidObjectId = function (ObjectId) {
@@ -37,7 +39,7 @@ const createOrder = async function(req, res){
         
 
         if (!cartId) {
-            return res.status(400).send({ status: false,message: "Cart doesn't exists for userId}",})
+            return res.status(400).send({ status: false,message: "CartId is required field}",})
         }
 
         if (!isValidObjectId(cartId)) {
@@ -60,16 +62,21 @@ const createOrder = async function(req, res){
 
         
         if (status) {
-            if (!(status)) {
-                return res.status(400).send({status: false, message: "Status must be among ['pending','completed','canceled']"})
+            if (!["pending","completed","cancelled"].includes(status)) {
+             
+                return res.status(400).send({status: false, message: "Status must be among ['pending','completed','cancelled']"})
             }
         }
 
         //verifying whether the cart is having any products or not.
         if (!searchCartDetails.items.length) {
-            return res.status(202).send({status: false, message: "Order already placed for this cart. Please add some products in cart to make an order",})
+            return res.status(400).send({status: false, message: "Order already placed for this cart. Please add some products in cart to make an order",})
         }
 
+        let totalQuantity =0
+        for(let i in searchCartDetails.items){
+            totalQuantity += searchCartDetails.items[i].quantity
+        }
         
         //object destructuring for response body.
         const orderDetails = {
