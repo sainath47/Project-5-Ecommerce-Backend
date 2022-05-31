@@ -7,7 +7,7 @@ const{createProduct, getProductByQuery, getProductById, deleteProduct, updatePro
 const{ getCart,deleteCart, createCartAndAddToCart, updateCart } =require('../Controllers/cartController')
 
 const { authentication, authorization } = require('../Middlewares/auth.js');
-const { createOrder } = require('../Controllers/ordercontroller.js');
+const { createOrder, updateOrder } = require('../Controllers/orderController.js');
 
 
 //user 
@@ -31,6 +31,6 @@ router.delete('/users/:userId/cart',authorization,deleteCart )
 
 //order
 router.post("/users/:userId/orders",authorization,createOrder)
-
+router.put('/users/:userId/orders',authorization,updateOrder)
 
 module.exports = router
