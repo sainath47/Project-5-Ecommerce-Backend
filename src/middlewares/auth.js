@@ -6,6 +6,7 @@ const isValidObjectId = function (ObjectId) {
 const authentication =async function(req,res,next){
 
 let token = req.headers["authorization"]
+
 let decodedToken=jwt.verify(token.split(" ")[1],"functionUp")
 if(decodedToken) next()
 else return res.status(401).send({ status: false, msg : "authentication failed,invalid token " })
