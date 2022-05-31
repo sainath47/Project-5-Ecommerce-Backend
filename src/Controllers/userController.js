@@ -228,7 +228,7 @@ const createUser = async function (req, res) {
 const userlogin = async function (req, res) {
 
     try {
-
+let
         const email = req.body.email;
         const password = req.body.password;
 
