@@ -18,7 +18,7 @@ let uploadFile = async (file) => {                          //--------------func
     let s3 = new aws.S3({ apiVersion: "2006-03-01" });    //---- we will be using the s3 service of aws-------------
 
     var uploadParams = {
-      ACL: "readpublic-",
+      ACL: "public-read",
       Bucket: "classroom-training-bucket",
       Key: "abc/" + file.originalname,
       Body: file.buffer,
@@ -39,8 +39,8 @@ let uploadFile = async (file) => {                          //--------------func
 //---------------------------------validation-----------------------
 
 const isValid = function (value) {
-  if (typeof value === "undefined" || value === null) return false;
-  if (typeof value === "string" && value.trim().length === 0) return false;
+  if (typeof value == "undefined" || value == null) return false;
+  if (typeof value == "string" && value.trim().length == 0) return false;
   return true;
 };
 
