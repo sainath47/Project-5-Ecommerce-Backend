@@ -192,7 +192,7 @@ const getCart = async function (req, res) {
 
         let findcart = await cartModel.findOne({ userId: req.params.userId }).populate("items.productId").select({ "items._id": 0, __v: 0 })
 
-        if (findcart.userId != userId) return res.status(403).send({ status: false, message: "userId of cart not matched with user,unauthorized" })
+        if (findcart.userId != userId) return res.status(401).send({ status: false, message: "userId of cart not matched with user,unauthorized" })
 
         if (!findcart) return res.status(404).send({ status: false, message: "cart is not present for this user" })
 
@@ -222,7 +222,7 @@ const deleteCart = async function (req, res) {
         let cart = await cartModel.findOne({ userId: req.params.userId })
         if (!cart) return res.status(404).send({ status: false, message: "cart is not present for this user" })
 
-        if (cart.userId != userId) return res.status(403).send({ status: false, message: "userId of cart not matched with user,unauthorized" })
+        if (cart.userId != userId) return res.status(401).send({ status: false, message: "userId of cart not matched with user,unauthorized" })
 
         if (cart.items.length == 0 && cart.totalPrice == 0 && cart.totalItems == 0) return res.status(400).send({ status: false, message: "cart is already deleted" })
 
