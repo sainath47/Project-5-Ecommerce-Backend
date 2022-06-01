@@ -1,4 +1,5 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+
 const ObjectId = mongoose.Types.ObjectId
 
 
@@ -53,4 +54,4 @@ const orderSchema = mongoose.Schema(
   }, { timestamps: true })
 
 
-module.exports = mongoose.model('Order', orderSchema)
+module.exports = mongoose.model('Order', orderSchema);

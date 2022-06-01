@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 
 
-const{createUser,userlogin,getUserdata,updateUserById}= require('../Controllers/userController.js')
-const{createProduct, getProductByQuery, getProductById, deleteProduct, updateProductById}=require('../Controllers/productController')
-const{ getCart,deleteCart, createCartAndAddToCart, updateCart } =require('../Controllers/cartController')
+const{createUser,userlogin,getUserdata,updateUserById}= require('../Controllers/userController.js');
+const{createProduct, getProductByQuery, getProductById, deleteProduct, updateProductById}=require('../Controllers/productController');
+const{ getCart,deleteCart, createCartAndAddToCart, updateCart } =require('../Controllers/cartController');
 
 const { authentication, authorization } = require('../Middlewares/auth.js');
 const { createOrder, updateOrder } = require('../Controllers/orderController.js');
