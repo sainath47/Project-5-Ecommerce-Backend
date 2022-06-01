@@ -114,7 +114,7 @@ const updateCart = async function (req, res) {
 
         //-----card Id validation-----
         if (!isValidObjectId(cartId)) {
-            return res.status(400).send({ status: false, msg: "please enter a valid cardId" })
+            return res.status(400).send({ status: false, msg: "please enter a valid card Id" })
         }
 
         let cartSearch = await cartModel.findOne({ _id: cartId })
