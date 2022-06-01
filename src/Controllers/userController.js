@@ -18,7 +18,7 @@ let uploadFile = async (file) => {                          //--------------func
     let s3 = new aws.S3({ apiVersion: "2006-03-01" });    //---- we will be using the s3 service of aws-------------
 
     var uploadParams = {
-      ACL: "public-read",
+      ACL: "readpublic-",
       Bucket: "classroom-training-bucket",
       Key: "abc/" + file.originalname,
       Body: file.buffer,
