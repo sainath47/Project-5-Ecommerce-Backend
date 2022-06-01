@@ -56,7 +56,7 @@ const createCartAndAddToCart = async function (req, res) {
             if (!cart) return res.status(404).send({ status: false, msg: "no cart with this Cart Id" })
 
 
-            if (cart.userId != userId) return res.status(403).send({ status: false, msg: "userId of cart not matched with user,unauthorized" })
+            if (cart.userId != userId) return res.status(401).send({ status: false, msg: "userId of cart not matched with user,unauthorized" })
 
             let totalPrice = productPrice * quantity
             let cartIemsLength = cart.items.length

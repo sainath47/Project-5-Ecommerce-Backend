@@ -34,7 +34,7 @@ const authorization = async function (req, res, next) {
    if (decodedToken) {
       if (decodedToken.userId == userId) 
       next()
-      else return res.status(403).send({ status: false, msg: "unauthorized" })
+      else return res.status(401).send({ status: false, msg: "unauthorized" })
    }
    else return res.status(401).send({ status: false, msg: "authentication failed,invalid token" })
 

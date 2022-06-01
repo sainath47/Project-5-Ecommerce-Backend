@@ -212,7 +212,7 @@ const getProductByQuery = async (req, res) => {
           }
 
 
-          const products = await productModel.find({ ...filterQuery }).sort({ price: 1 })
+          const products = await productModel.find({ ...filterQuery,size:{$in:[XXL,] }}).sort({ price: 1 })
 
     
           if (!(products.length)) return res.status(404).send({ status: false, msg: 'No products found' })
