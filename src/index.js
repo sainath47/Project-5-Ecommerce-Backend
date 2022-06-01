@@ -8,7 +8,7 @@ const multer= require("multer");
 app.use( multer().any())
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended : true }));
+
 
 mongoose.connect("mongodb+srv://SAINATH47:COOLESTBEING@cluster0.fk14j.mongodb.net/Project5-group28", {
     useNewUrlParser: true

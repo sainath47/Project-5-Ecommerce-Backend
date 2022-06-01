@@ -100,7 +100,7 @@ const updateCart = async function (req, res) {
             return res.status(400).send({ status: false, msg: "please enter a valid userId" })
         }
 
-        const { productId, cartId, removeProduct } = req.body; //destructurig and validation
+        const { productId, cartId, removeProduct } = body; //destructurig and validation
 
         //----product Id validation-----
         if (!isValidObjectId(productId)) {
