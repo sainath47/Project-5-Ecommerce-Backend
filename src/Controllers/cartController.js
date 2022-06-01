@@ -47,7 +47,7 @@ const createCartAndAddToCart = async function (req, res) {
             data["totalPrice"] = productPrice * quantity
 
             let cartCreated = await cartModel.create(data)
-            return res.status(201).send({ status: true, message: "Success", data: cartCreated })
+            return res.status(201).send({ status: true, message: "Cart created Successfully", data: cartCreated })
         
         //if cart Id is present then validate cart Id & update cart------
         } else if (cartId) {
@@ -67,14 +67,14 @@ const createCartAndAddToCart = async function (req, res) {
 
                     let updatedCart = await cartModel.findOneAndUpdate({ _id: cartId }, { items: cart.items, totalItems: cartIemsLength, $inc: { totalPrice } }, { new: true }).select({ "items._id": 0, __v: 0 })
 
-                    return res.status(200).send({ status: true, message: "Success", data: updatedCart })
+                    return res.status(200).send({ status: true, message: "Cart updated successfull", data: updatedCart })
                 }
 
             }
 
             let updatedCart = await cartModel.findOneAndUpdate({ _id: cartId }, { $push: { items: { productId, quantity } }, totalItems: cartIemsLength + 1, $inc: { totalPrice: totalPrice } }, { new: true }).select({ "items._id": 0, __v: 0 })
 
-            return res.status(200).send({ status: true, message: "Success", data: updatedCart })
+            return res.status(200).send({ status: true, message: "Cart updated successfull", data: updatedCart })
         }
 
     } catch (err) {
@@ -146,20 +146,20 @@ const updateCart = async function (req, res) {
                 if (removeProduct == 0) {
                     const productRemove = await cartModel.findOneAndUpdate({ _id: cartId }, { $pull: { items: { productId: productId } }, totalPrice: cartSearch.totalPrice - priceChange, totalItems: cartSearch.totalItems - totalquantity }, { new: true }).select({ "items._id": 0, __v: 0 })
 
-                    return res.status(200).send({ status: true, message: "Success", data: productRemove })
+                    return res.status(200).send({ status: true, message: "Cart updated successfull", data: productRemove })
                 }
 
                 if (removeProduct == 1) {
                     if (cart[i].quantity == 1 && removeProduct == 1) {
                         const priceUpdate = await cartModel.findOneAndUpdate({ _id: cartId }, { $pull: { items: { productId } }, totalPrice: cartSearch.totalPrice - priceChange, totalItems: cartSearch.totalItems - 1 }, { new: true }).select({ "items._id": 0, __v: 0 })
 
-                        return res.status(200).send({ status: true, message: "Success", data: priceUpdate })
+                        return res.status(200).send({ status: true, message: "Cart updated successfull", data: priceUpdate })
                     }
 
                     cart[i].quantity = cart[i].quantity - 1
                     const updatedCart = await cartModel.findByIdAndUpdate({ _id: cartId }, { items: cart, totalPrice: cartSearch.totalPrice - productSearch.price, totalItems: cart.length }, { new: true }).select({ "items._id": 0, __v: 0 })
 
-                    return res.status(200).send({ status: true, message: "Success", data: updatedCart })
+                    return res.status(200).send({ status: true, message: "Cart updated successfull", data: updatedCart })
                 }
 
             }
@@ -196,7 +196,7 @@ const getCart = async function (req, res) {
 
         if (!findcart) return res.status(404).send({ status: false, message: "cart is not present for this user" })
 
-        return res.status(200).send({ status: true, message: "Success", data: findcart })
+        return res.status(200).send({ status: true, message: "Cart details", data: findcart })
 
 
     } catch (err) {
@@ -229,7 +229,7 @@ const deleteCart = async function (req, res) {
 
         let deletedcart = await cartModel.findOneAndUpdate({ userId: req.params.userId }, { items: [], totalItems: 0, totalPrice: 0 }, { new: true })
 
-        return res.status(204).send({ status: true, message: "Success", data: deletedcart })
+        return res.status(204).send({ status: true, message: "Cart deleted successfull", data: deletedcart })
 
     } catch (err) {
          return res.status(500).send({ status: false, message: err.message })

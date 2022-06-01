@@ -217,7 +217,7 @@ const createUser = async function (req, res) {
     data["password"] = await bcrypt.hash(password, saltRounds);
 
     let createUser = await userModel.create(data)
-          return res.status(201).send({ status: true, message: "Success", data: createUser })
+          return res.status(201).send({ status: true, message: "User created successfully", data: createUser })
 
   } catch (error) {
         return res.status(500).send({ status: false, message: error.message });
@@ -270,7 +270,7 @@ const userlogin = async function (req, res) {
       { expiresIn: '4d' });
 
     const result = { userId, token }
-       return res.status(200).send({ status: true, message: "Success", data: result });
+       return res.status(200).send({ status: true, message: "User login successfull", data: result });
 
   }
   catch (error) {
@@ -297,7 +297,7 @@ const getUserdata = async function (req, res) {
     let finddata = await userModel.findById(userId)
     if (!finddata) return res.status(404).send({ status: false, message: "No user found" })
 
-        return res.status(200).send({ status: true, message: "Success", data: finddata })
+        return res.status(200).send({ status: true, message: "User profile details", data: finddata })
   }
 
   catch (err) {
@@ -449,7 +449,7 @@ const updateUserById = async function (req, res) {
       },
       { new: true }
     );
-    return res.status(200).send({ status: true, message: "Success", data: updatedUser });
+    return res.status(200).send({ status: true, message: "User profile updated", data: updatedUser });
 
   } catch (err) {
        return res.status(500).send({ status: false, message: err.message });

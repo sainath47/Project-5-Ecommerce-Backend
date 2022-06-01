@@ -89,7 +89,7 @@ const createOrder = async function (req, res) {
 
     //Empty the cart after the successfull order
     await cartModel.findOneAndUpdate({ _id: cartId, userId: userId }, { $set: { items: [], totalPrice: 0, totalItems: 0, }, });
-    return res.status(200).send({ status: true, message: "Success", data: savedOrder });
+    return res.status(200).send({ status: true, message: "Order created successfully", data: savedOrder });
 
   } catch (err) {
        return res.status(500).send({ status: false, message: err.message });
@@ -123,11 +123,11 @@ const updateOrder = async function (req, res) {
     if (findOrder.cancellable) {
       if (isDeleted == true) {
       let updatedOrder = await orderModel.findOneAndUpdate({ _id: orderId, userId }, { isDeleted, status, deletedAt: Date.now() }, { new: true });
-        return res.status(200).send({ status: true, message: "sucessfully Order updated ", data: updatedOrder, });
+        return res.status(200).send({ status: true, message: "Order updated successfully ", data: updatedOrder, });
       }
 
       let updatedOrder = await orderModel.findOneAndUpdate({ _id: orderId, userId }, { status }, { new: true });
-        return res.status(200).send({ status: true, message: "sucessfully Order updated ", data: updatedOrder, });
+        return res.status(200).send({ status: true, message: "Order updated successfully", data: updatedOrder, });
     }
 
     if (!findOrder.cancellable && status == "cancelled")
@@ -135,11 +135,11 @@ const updateOrder = async function (req, res) {
 
     if (isDeleted == true) {
     let updatedOrder = await orderModel.findOneAndUpdate({ _id: orderId, userId }, { isDeleted, status, deletedAt: Date.now() }, { new: true });
-        return res.status(200).send({ status: true, message: "sucessfully Order updated ", data: updatedOrder, });
+        return res.status(200).send({ status: true, message: "Order updated successfully", data: updatedOrder, });
     }
 
     let updatedOrder = await orderModel.findOneAndUpdate({ _id: orderId, userId }, { status }, { new: true });
-        return res.status(200).send({ status: true, message: "sucessfully Order updated ", data: updatedOrder, });
+        return res.status(200).send({ status: true, message: "Order updated successfully", data: updatedOrder, });
 
   } catch (error) {
         return res.status(500).send({ status: false, message: err.message });

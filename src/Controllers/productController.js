@@ -152,7 +152,7 @@ const createProduct = async function (req, res) {
      }
 
      let createProduct = await productModel.create(data)
-        return res.status(201).send({ status: true, message: "Success", data: createProduct })
+        return res.status(201).send({ status: true, message: "Product created successfully", data: createProduct })
 
   } catch (err) {
         return res.status(500).send({ status: false, message: err.message })
@@ -215,7 +215,7 @@ const getProductByQuery = async (req, res) => {
 
 
       if (!(products.length)) return res.status(404).send({ status: false, message: 'No products found' })
-          return res.status(200).send({ status: true, message: "Success", data: products })
+          return res.status(200).send({ status: true, message: "Product details", data: products })
 
    } catch (err) {
        return res.status(500).send({ status: false, Error: err.message })
@@ -241,7 +241,7 @@ const getProductById = async function (req, res) {
 
       if (!findProduct) return res.status(400).send({ status: false, message: "Product Not Found" })
 
-      return res.status(200).send({ status: true, message: "Success", data: findProduct })
+      return res.status(200).send({ status: true, message: "Product details", data: findProduct })
 
   } catch (err) {
       return res.status(500).send({ status: false, Error: err.message })
@@ -349,7 +349,7 @@ const updateProductById = async function (req, res) {
 
       if (!updatedProduct) return res.status(404).send({ status: false, message: "product not found" })
 
-      return res.status(200).send({ status: true, message: "Success", data: updatedProduct });
+      return res.status(200).send({ status: true, message: "Product updated successfull", data: updatedProduct });
 
    } catch (err) {
       return res.status(500).send({ status: false, message: err.message });
@@ -380,7 +380,7 @@ const deleteProduct = async function (req, res) {
       }
       await productModel.findOneAndUpdate({ _id: ProductId }, { isDeleted: true, deletedAt: Date() }, { new: true });
 
-          return res.status(200).send({ status: true, message: "Success" });
+          return res.status(200).send({ status: true, message: "Product deleted successfull" });
 
    } catch (err) {
           return res.status(500).send({ status: false, message: err.message });
