@@ -120,7 +120,7 @@ const updateCart = async function (req, res) {
 
         let cartSearch = await cartModel.findOne({ _id: cartId })
         if (!cartSearch) {
-             return res.status(404).send({ status: false, message: "cart Id not found" })
+             return res.status(404).send({ status: false, message: "cart with this cart ID not found" })
         }
 
         if (cartSearch.userId != userId) return res.status(401).send({ status: false, message: "userId of cart not matched with user,unauthorized" })
@@ -144,7 +144,7 @@ const updateCart = async function (req, res) {
 
 
                 if (removeProduct == 0) {
-                    const productRemove = await cartModel.findOneAndUpdate({ _id: cartId }, { $pull: { items: { productId: productId } }, totalPrice: cartSearch.totalPrice - priceChange, totalItems: cartSearch.totalItems - totalquantity }, { new: true }).select({ "items._id": 0, __v: 0 })
+                    const productRemove = await cartModel.findOneAndUpdate({ _id: cartId }, { $pull: { items: { productId: productId } }, totalPrice: cartSearch.totalPrice - priceChange, totalItems:cartSearch.items.length-1  }, { new: true }).select({ "items._id": 0, __v: 0 })
 
                     return res.status(200).send({ status: true, message: "Cart updated successfull", data: productRemove })
                 }
@@ -166,7 +166,7 @@ const updateCart = async function (req, res) {
 
         }
 
-        if (count == 0) return res.status(404).send({ status: false, message: "productId is not present in cart" })
+        if (count == 0) return res.status(404).send({ status: false, message: "product with this productId is not present in this cart" })
 
     } catch (err) {
          return res.status(500).send({ status: false, message: err.message })

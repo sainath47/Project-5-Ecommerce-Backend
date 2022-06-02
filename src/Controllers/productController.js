@@ -179,7 +179,7 @@ const getProductByQuery = async (req, res) => {
 
       const queryParams = req.query
 
-      let { size, name, priceGreaterThan, priceLessThan } = queryParams
+      let { size, name, priceGreaterThan, priceLessThan,priceSort } = queryParams
 
       const filterQuery = { isDeleted: false, ...req.query }
 
@@ -210,12 +210,19 @@ const getProductByQuery = async (req, res) => {
         filterQuery['title'] = name
       }
 
-
-      const products = await productModel.find({ ...filterQuery, size: { $in: [XXL,] } }).sort({ price: 1 })
+if(priceSort==1)
+{      const products = await productModel.find({ ...filterQuery }).sort({ price: 1 })
 
 
       if (!(products.length)) return res.status(404).send({ status: false, message: 'No products found' })
-          return res.status(200).send({ status: true, message: "Product details", data: products })
+          return res.status(200).send({ status: true, message: "Product details", data: products })}
+
+if(priceSort==-1)
+{      const products = await productModel.find({ ...filterQuery }).sort({ price: -1 })
+
+
+      if (!(products.length)) return res.status(404).send({ status: false, message: 'No products found' })
+          return res.status(200).send({ status: true, message: "Product details", data: products })}
 
    } catch (err) {
        return res.status(500).send({ status: false, Error: err.message })
