@@ -13,7 +13,6 @@ const authentication = async function (req, res, next) {
    if (!token) return res.status(401).send({ status: false, message: "please provide token " })
 
    let decodedToken = jwt.verify(token.split(" ")[1], "functionUp")
-   console.log(decodedToken)
 
     
    if (decodedToken)  next()
