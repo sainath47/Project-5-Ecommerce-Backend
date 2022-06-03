@@ -139,7 +139,7 @@ const updateCart = async function (req, res) {
             if (cart[i].productId == productId) {
                 count++
 
-                let totalquantity = cart[i].quantity
+                // let totalquantity = cart[i].quantity
                 const priceChange = cart[i].quantity * productSearch.price
 
 
