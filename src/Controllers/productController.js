@@ -213,26 +213,27 @@ const getProductByQuery = async (req, res) => {
 
 
   
-if(priceSort==1)
-{      const products = await productModel.find({ ...filterQuery }).sort({ price: 1 })
-
-
-      if (!(products.length)) return res.status(404).send({ status: false, message: 'No products found' })
-          return res.status(200).send({ status: true, message: "Product details", data: products })}
-
-if(priceSort==-1)
-{      const products = await productModel.find({ ...filterQuery }).sort({ price: -1 })
+      if(priceSort==1){
+        const products = await productModel.find({ ...filterQuery }).sort({ price: 1 })
 
 
       if (!(products.length)) return res.status(404).send({ status: false, message: 'No products found' })
           return res.status(200).send({ status: true, message: "Product details", data: products })
         }
 
-          const products = await productModel.find({ ...filterQuery })
+     if(priceSort==-1){      
+       const products = await productModel.find({ ...filterQuery }).sort({ price: -1 })
 
 
-          if (!(products.length)) return res.status(404).send({ status: false, message: 'No products found' })
-              return res.status(200).send({ status: true, message: "Product details", data: products })
+      if (!(products.length)) return res.status(404).send({ status: false, message: 'No products found' })
+          return res.status(200).send({ status: true, message: "Product details", data: products })
+        }
+
+      const products = await productModel.find({ ...filterQuery })
+
+
+      if (!(products.length)) return res.status(404).send({ status: false, message: 'No products found' })
+          return res.status(200).send({ status: true, message: "Product details", data: products })
 
    } catch (err) {
        return res.status(500).send({ status: false, Error: err.message })
