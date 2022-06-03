@@ -69,10 +69,19 @@ const createUser = async function (req, res) {
 
     } else {
 
-      const { fname, lname, email, phone, password, address } = data;
+      const { fname, lname, email, phone, password, address,profileImage } = data;
 
       const { shipping, billing } = address;
       //-----------------------------------------------validation start from here------------------------------------------------//
+
+
+    //----------validation for profileImage---------------
+
+    if (!(req.files && req.files.length)) {
+      return res.status(400).send({ status: false, message: "Image file is missing." });
+    }
+
+ 
 
       //----------validation for fname  & unique name---------------
 
@@ -115,7 +124,7 @@ const createUser = async function (req, res) {
             return res.status(400).send({ status: false, message: "phone already exist" });
       }
 
-      if (!/^(\+\d{1,3}[- ]?)?\d{10}$/.test(phone)) {
+      if (!(/^[789]\d{9}$/).test(phone)) {
             return res.status(400).send({ status: false, message: "please enter a valid phone" });
       }
 
