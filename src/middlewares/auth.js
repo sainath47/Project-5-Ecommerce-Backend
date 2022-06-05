@@ -13,7 +13,6 @@ try{
    if (!bearerHeader) return res.status(401).send({ status: false, message: "please provide token " })
 
    let bearerToken = bearerHeader.split(' ');
-
    let token = bearerToken[1];
 
 
